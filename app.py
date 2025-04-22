@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pickle
 import numpy as np
@@ -13,13 +12,29 @@ with open('scaler.pkl', 'rb') as f:
 with open('features.pkl', 'rb') as f:
     features = pickle.load(f)
 
+# Change background color and customize button style
+st.markdown(
+    """
+    <style>
+    body {
+        background-color: #f0f8ff;  
+    }
+    .stButton>button {
+        background-color: #ff6347;  
+        color: white;
+    }
+    </style>
+    """, unsafe_allow_html=True
+)
+
 st.title("☀️ Solar Power Generation Predictor")
 
 st.write("Enter the values for each environmental feature:")
 
 user_input = []
 for feat in features:
-    val = st.number_input(f"{feat}", value=0.0)
+    # Assuming the features are numeric, set the input type to float
+    val = st.number_input(f"{feat}", value=0.0, format="%.2f")  # format ensures float input with 2 decimals
     user_input.append(val)
 
 if st.button("Predict"):
