@@ -12,19 +12,19 @@ with open('scaler.pkl', 'rb') as f:
 with open('features.pkl', 'rb') as f:
     features = pickle.load(f)
 
-# Inject CSS styling
+# CSS Styling
+st.set_page_config(page_title="Solar Power Predictor", layout="centered")
+
 st.markdown("""
     <style>
     body {
-        background-image: url('https://images.unsplash.com/photo-1603297631958-e930c7e8bb3a?auto=format&fit=crop&w=1950&q=80');
-        background-size: cover;
+        background: linear-gradient(135deg, #004e92, #000428);
         background-attachment: fixed;
-        background-repeat: no-repeat;
-        background-position: center;
         font-family: 'Segoe UI', sans-serif;
     }
+
     .glass-card {
-        background: rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.15);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         border-radius: 15px;
@@ -33,27 +33,33 @@ st.markdown("""
         max-width: 700px;
         box-shadow: 0 8px 32px rgba(0,0,0,0.2);
     }
+
     h1, h3 {
         color: #ffffff;
         text-align: center;
-        text-shadow: 1px 1px 2px #000;
+        text-shadow: 1px 1px 3px #000;
     }
+
     .stButton > button {
-        background-color: #ff9800;
+        background-color: #1e88e5;
         color: white;
         padding: 0.6em 1.5em;
         border-radius: 8px;
         font-weight: bold;
         transition: 0.3s ease;
     }
+
     .stButton > button:hover {
-        background-color: #e65100;
+        background-color: #1565c0;
         transform: scale(1.05);
     }
+
     .stNumberInput input {
         border-radius: 8px;
         padding: 0.5rem;
+        background-color: rgba(255, 255, 255, 0.8);
     }
+
     .stSuccess {
         background-color: rgba(255, 255, 255, 0.3);
         border-radius: 10px;
@@ -64,22 +70,23 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Title
+# 👇🏽 Start glass container only from here (after CSS is loaded)
 st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
-st.markdown("## 🌞 Solar Power Generation Predictor", unsafe_allow_html=True)
+
+# Title
+st.markdown("## 🌊 Solar Power Generation Predictor", unsafe_allow_html=True)
 st.markdown("### 🔧 Enter environmental feature values below", unsafe_allow_html=True)
 
-# Input layout: 2 columns with 4 rows = 8 features
+# Input layout
 user_input = []
-cols = st.columns(2)  # Two columns
-
+cols = st.columns(2)
 for i, feat in enumerate(features):
-    with cols[i % 2]:  # Alternate between col 0 and col 1
+    with cols[i % 2]:
         val = st.number_input(f"**{feat}**", value=0.0, format="%.2f")
         user_input.append(val)
 
-# Prediction
-if st.button("🚀 Predict"):
+# Predict Button
+if st.button("🔵 Predict"):
     try:
         input_array = np.array(user_input).reshape(1, -1)
         scaled_input = scaler.transform(input_array)
@@ -88,4 +95,5 @@ if st.button("🚀 Predict"):
     except Exception as e:
         st.error(f"❌ Error: {e}")
 
+# End glass card
 st.markdown("</div>", unsafe_allow_html=True)
