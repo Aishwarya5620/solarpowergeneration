@@ -6,24 +6,19 @@ from sklearn.preprocessing import StandardScaler
 from streamlit_lottie import st_lottie
 import requests
 
-# Function to load Lottie animation from URL
-def load_lottieurl(url: str):
+# Load animation from URL
+def load_lottieurl(url):
     r = requests.get(url)
     if r.status_code != 200:
         return None
     return r.json()
 
-# Load Lottie animations
-solar_animation = load_lottieurl("https://assets5.lottiefiles.com/packages/lf20_dzyzxlqg.json")  # solar panel
-predict_animation = load_lottieurl("https://assets10.lottiefiles.com/private_files/lf30_hc3vpx.json")  # forecast
-sidebar_animation = load_lottieurl("https://assets1.lottiefiles.com/packages/lf20_gjmecwii.json")  # info bulb
+# Load animations
+solar_animation = load_lottieurl("https://assets5.lottiefiles.com/packages/lf20_dzyzxlqg.json")
+predict_animation = load_lottieurl("https://assets10.lottiefiles.com/private_files/lf30_hc3vpx.json")
+sidebar_animation = load_lottieurl("https://assets1.lottiefiles.com/packages/lf20_gjmecwii.json")
 
-# Set page config
-st.set_page_config(
-    page_title="Solar Power Generation Predictor",
-    page_icon="☀️",
-    layout="wide"
-)
+st.set_page_config(page_title="Solar Power Generation Predictor", page_icon="☀️", layout="wide")
 
 @st.cache_resource
 def load_model():
@@ -32,46 +27,60 @@ def load_model():
     with open('scaler.pkl', 'rb') as f:
         scaler = pickle.load(f)
     with open('features.pkl', 'rb') as f:
-        feature_names = pickle.load(f)
-    return model, scaler, feature_names
+        features = pickle.load(f)
+    return model, scaler, features
 
-model, scaler, feature_names = load_model()
+model, scaler, features = load_model()
 
-# CSS STYLING (same as before)...
-# [Your CSS goes here, unchanged, as already styled for black text and background]
+# Header
+col1, col2 = st.columns([2, 1])
+with col1:
+    st.markdown("<h1 style='color:black;'>☀️ Solar Power Predictor</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='color:black;'>Predict solar power generation based on environment.</p>", unsafe_allow_html=True)
+with col2:
+    st_lottie(solar_animation, height=200)
 
-# Header with animation
-with st.container():
-    col1, col2 = st.columns([2, 1])
-    with col1:
-        st.markdown("<h1 class='header'>☀️ Solar Power Generation Predictor</h1>", unsafe_allow_html=True)
-        st.markdown("""
-        <div style="background-color: rgba(255, 255, 255, 0.7); padding: 1rem; border-radius: 10px; margin-bottom: 2rem;">
-        Predict solar power generation based on weather and environmental conditions.
-        </div>
-        """, unsafe_allow_html=True)
-    with col2:
-        st_lottie(solar_animation, height=200, key="header_anim")
-
-# Input Form
+# Inputs
 col1, col2 = st.columns(2)
 with col1:
-    st.markdown("<div class='input-box'>", unsafe_allow_html=True)
-    st.subheader("🌤️ Solar & Weather Parameters")
-    distance_to_solar_noon = st.text_input("Distance to Solar Noon (degrees)", "0.0")
-    temperature = st.text_input("Temperature (°C)", "25.0")
-    wind_speed = st.text_input("Wind Speed (km/h)", "10.0")
-    sky_cover = st.text_input("Sky Cover (oktas)", "2.0")
-    st.markdown("</div>", unsafe_allow_html=True)
-
+    st.subheader("🌤️ Weather")
+    noon = st.text_input("Solar Noon Distance", "0.0")
+    temp = st.text_input("Temperature (°C)", "25.0")
+    wind_spd = st.text_input("Wind Speed (km/h)", "10.0")
+    sky = st.text_input("Sky Cover", "2.0")
 with col2:
-    st.markdown("<div class='input-box'>", unsafe_allow_html=True)
-    st.subheader("🌬️ Atmospheric Conditions")
-    wind_direction = st.text_input("Wind Direction (°)", "180.0")
-    visibility = st.text_input("Visibility (km)", "10.0")
-    humidity = st.text_input("Humidity (%)", "50.0")
-    average_pressure = st.text_input("Average Pressure (hPa)", "1013.0")
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.subheader("🌬️ Atmosphere")
+    wind_dir = st.text_input("Wind Direction (°)", "180.0")
+    vis = st.text_input("Visibility (km)", "10.0")
+    humid = st.text_input("Humidity (%)", "50.0")
+    press = st.text_input("Pressure (hPa)", "1013.0")
 
 if st.button('🔮 Predict Power Generation', use_container_width=True):
+    try:
+        data = {
+            'distance_to_solar_noon': float(noon),
+            'temperature': float(temp),
+            'wind_direction': float(wind_dir),
+            'wind_speed': float(wind_spd),
+            'sky_cover': float(sky),
+            'visibility': float(vis),
+            'humidity': float(humid),
+            'average_pressure': float(press)
+        }
+        df = pd.DataFrame([data], columns=features + ['power_generated']).assign(power_generated=0)
+        pred = np.exp(model.predict(scaler.transform(df))[:, 0])
 
+        st.success(f"Predicted Power: {pred[0]:.2f} MW")
+        st.info(f"1 Hour Energy: {pred[0] * 1_000_000 * 3600:,.0f} J")
+        st_lottie(predict_animation, height=100)
+    except Exception as e:
+        st.error(f"Error: {e}")
+
+with st.sidebar:
+    st_lottie(sidebar_animation, height=100)
+    st.header("ℹ️ About")
+    st.markdown("ML model predicting solar power output.")
+    st.header("📝 How to Use")
+    st.markdown("Enter weather data & click predict.")
+
+st.markdown("<hr>", unsafe_allow_html=True)
