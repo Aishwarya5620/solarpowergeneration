@@ -12,10 +12,9 @@ with open('scaler.pkl', 'rb') as f:
 with open('features.pkl', 'rb') as f:
     features = pickle.load(f)
 
-# Inject stunning CSS
+# Inject CSS styling
 st.markdown("""
     <style>
-    /* Background Image with blur */
     body {
         background-image: url('https://images.unsplash.com/photo-1603297631958-e930c7e8bb3a?auto=format&fit=crop&w=1950&q=80');
         background-size: cover;
@@ -24,8 +23,6 @@ st.markdown("""
         background-position: center;
         font-family: 'Segoe UI', sans-serif;
     }
-
-    /* Glass container */
     .glass-card {
         background: rgba(255, 255, 255, 0.2);
         backdrop-filter: blur(10px);
@@ -33,40 +30,30 @@ st.markdown("""
         border-radius: 15px;
         padding: 2rem;
         margin: 2rem auto;
-        max-width: 600px;
+        max-width: 700px;
         box-shadow: 0 8px 32px rgba(0,0,0,0.2);
     }
-
-    /* Headings */
     h1, h3 {
         color: #ffffff;
         text-align: center;
         text-shadow: 1px 1px 2px #000;
     }
-
-    /* Buttons */
     .stButton > button {
         background-color: #ff9800;
         color: white;
         padding: 0.6em 1.5em;
         border-radius: 8px;
-        border: none;
         font-weight: bold;
         transition: 0.3s ease;
     }
-
     .stButton > button:hover {
         background-color: #e65100;
         transform: scale(1.05);
     }
-
-    /* Number inputs */
     .stNumberInput input {
         border-radius: 8px;
         padding: 0.5rem;
     }
-
-    /* Result text */
     .stSuccess {
         background-color: rgba(255, 255, 255, 0.3);
         border-radius: 10px;
@@ -82,11 +69,14 @@ st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
 st.markdown("## 🌞 Solar Power Generation Predictor", unsafe_allow_html=True)
 st.markdown("### 🔧 Enter environmental feature values below", unsafe_allow_html=True)
 
-# Inputs
+# Input layout: 2 columns with 4 rows = 8 features
 user_input = []
-for feat in features:
-    val = st.number_input(f"**{feat}**", value=0.0, format="%.2f")
-    user_input.append(val)
+cols = st.columns(2)  # Two columns
+
+for i, feat in enumerate(features):
+    with cols[i % 2]:  # Alternate between col 0 and col 1
+        val = st.number_input(f"**{feat}**", value=0.0, format="%.2f")
+        user_input.append(val)
 
 # Prediction
 if st.button("🚀 Predict"):
