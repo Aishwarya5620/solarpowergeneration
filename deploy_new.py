@@ -7,6 +7,13 @@ import numpy as np
 import pickle
 from sklearn.preprocessing import StandardScaler
 
+# Set page config
+st.set_page_config(
+    page_title="Solar Power Predictor",
+    page_icon="☀️",
+    layout="centered"
+)
+
 # Load the saved model, scaler, and feature names
 @st.cache_resource
 def load_model():
@@ -20,29 +27,43 @@ def load_model():
 
 model, scaler, feature_names = load_model()
 
-# Page configuration
-st.set_page_config(page_title="Solar Power Predictor", page_icon="☀️", layout="centered")
-
-st.title("☀️ Solar Power Generation Predictor")
-st.markdown("Enter environmental and weather parameters to estimate solar power output.")
-
-# Input fields
-with st.form("input_form"):
-    col1, col2 = st.columns(2)
-
-    with col1:
-        distance_to_solar_noon = st.number_input("Distance to Solar Noon (degrees)", value=0.0)
-        temperature = st.number_input("Temperature (°C)", value=25.0)
-        wind_speed = st.number_input("Wind Speed (km/h)", value=10.0)
-        sky_cover = st.number_input("Sky Cover (oktas, 0-8)", min_value=0.0, max_value=8.0, value=2.0)
-
-    with col2:
-        wind_direction = st.number_input("Wind Direction (degrees, 0-360)", min_value=0.0, max_value=360.0, value=180.0)
-        visibility = st.number_input("Visibility (km)", value=10.0)
-        humidity = st.number_input("Humidity (%)", min_value=0.0, max_value=100.0, value=50.0)
-        average_pressure = st.number_input("Average Pressure (hPa)", value=1013.0)
-
-    submitted = st.form_submit_button("Predict")
+# Styling
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-color: #f0f8ff;
+    }
+    .title {
+        font-size: 2.5rem;
+        font-weight: 600;
+        color: #333;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+    .section {
+        background-color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        margin-bottom: 1rem;
+    }
+    .stButton>button {
+        background-color: #007acc;
+        color: white;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        transition: 0.3s;
+    }
+    .stButton>button:hover {
+        background-color: #005f99;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 # Prediction function
 def predict_power(input_data):
@@ -55,37 +76,68 @@ def predict_power(input_data):
     prediction = np.exp(log_prediction)[0]
     return prediction
 
-# Display prediction
-if submitted:
-    try:
-        input_data = {
-            'distance_to_solar_noon': distance_to_solar_noon,
-            'temperature': temperature,
-            'wind_direction': wind_direction,
-            'wind_speed': wind_speed,
-            'sky_cover': sky_cover,
-            'visibility': visibility,
-            'humidity': humidity,
-            'average_pressure': average_pressure
-        }
+# Title
+st.markdown("<div class='title'>☀️ Solar Power Predictor</div>", unsafe_allow_html=True)
 
-        prediction = predict_power(input_data)
-        st.success(f"Predicted Power Generation: {prediction:.2f} MW")
-        st.info(f"Estimated Energy for 1 hour: {prediction * 1_000_000 * 3600:,.0f} J")
+# Input section
+with st.container():
+    st.markdown("<div class='section'>", unsafe_allow_html=True)
+    st.subheader("Enter Weather & Atmospheric Data")
 
-        if prediction < 2:
-            st.warning("Status: Low Power Generation")
-        elif prediction < 5:
-            st.info("Status: Moderate Power Generation")
-        else:
-            st.success("Status: High Power Generation")
+    col1, col2 = st.columns(2)
 
-    except Exception as e:
-        st.error(f"An error occurred: {str(e)}")
+    with col1:
+        distance_to_solar_noon = st.number_input("Distance to Solar Noon (degrees)", value=0.0)
+        temperature = st.number_input("Temperature (°C)", value=25.0)
+        wind_speed = st.number_input("Wind Speed (km/h)", value=10.0)
+        sky_cover = st.number_input("Sky Cover (oktas, 0-8)", value=2.0)
 
-# Sidebar info
+    with col2:
+        wind_direction = st.number_input("Wind Direction (degrees, 0-360)", value=180.0)
+        visibility = st.number_input("Visibility (km)", value=10.0)
+        humidity = st.number_input("Humidity (%)", value=50.0)
+        average_pressure = st.number_input("Average Pressure (hPa)", value=1013.0)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    # Prediction
+    if st.button('🔍 Predict Power Generation'):
+        try:
+            input_data = {
+                'distance_to_solar_noon': distance_to_solar_noon,
+                'temperature': temperature,
+                'wind_direction': wind_direction,
+                'wind_speed': wind_speed,
+                'sky_cover': sky_cover,
+                'visibility': visibility,
+                'humidity': humidity,
+                'average_pressure': average_pressure
+            }
+
+            prediction = predict_power(input_data)
+            energy_joules = prediction * 1_000_000 * 3600
+
+            st.success(f"Predicted Power Generation: {prediction:.2f} MW")
+            st.info(f"Estimated Energy for 1 Hour: {energy_joules:,.0f} J")
+
+            # Efficiency gauge
+            efficiency = (prediction / 10) * 100
+            st.metric("System Efficiency", f"{efficiency:.1f}%")
+            st.progress(min(efficiency / 100, 1.0))
+
+        except Exception as e:
+            st.error(f"Error: {str(e)}")
+
+# Sidebar
 with st.sidebar:
-    st.header("About")
-    st.write("This app predicts solar power generation using a machine learning model.")
+    st.header("ℹ️ About")
+    st.write("Predict solar power output using weather-based machine learning model.")
     st.write("Model: Random Forest Regressor")
-    st.write("Trained on real environmental and solar generation data.")
+    st.write("Features: Weather, Atmospheric conditions")
+
+    st.header("📌 Instructions")
+    st.markdown("""
+    1. Fill in all values
+    2. Click Predict
+    3. View results and efficiency
+    """)
