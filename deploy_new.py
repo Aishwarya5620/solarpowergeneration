@@ -27,7 +27,7 @@ def load_model():
 
 model, scaler, feature_names = load_model()
 
-# Add this to the styling section
+# Styling
 st.markdown(
     """
     <style>
@@ -65,24 +65,10 @@ st.markdown(
     label, .stTextInput, .stNumberInput, .stMetric, .stSelectbox, .stSlider, .stCheckbox {
         color: black !important;
     }
-    /* Ensure text stays black in results section after prediction */
-    .stSuccess, .stInfo, .stError {
-        color: black !important;
-    }
-    /* Apply black color to all dynamic text outputs (e.g., prediction and energy values) */
-    .stMarkdown {
-        color: black !important;
-    }
-    .stMetric {
-        color: black !important;
-    }
     </style>
     """,
     unsafe_allow_html=True
 )
-
-# The rest of the code remains the same as provided in your original script
-
 
 # Prediction function
 def predict_power(input_data):
