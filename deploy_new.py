@@ -27,16 +27,11 @@ def load_model():
 
 model, scaler, feature_names = load_model()
 
-# Embedded CSS styling
 st.markdown(
     """
     <style>
     .stApp {
-        background-image: url("https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
+        background-color: #f5f5f5;
         color: black !important;
     }
     .main {
