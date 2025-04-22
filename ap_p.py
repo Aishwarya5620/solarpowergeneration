@@ -133,16 +133,4 @@ with st.container():
         except Exception as e:
             st.error(f"Error: {str(e)}")
 
-# Sidebar
-with st.sidebar:
-    st.header("ℹ️ About")
-    st.write("Predict solar power output using weather-based machine learning model.")
-    st.write("Model: Random Forest Regressor")
-    st.write("Features: Weather, Atmospheric conditions")
 
-    st.header("📌 Instructions")
-    st.markdown("""
-    1. Fill in all values
-    2. Click Predict
-    3. View results and efficiency
-    """)
