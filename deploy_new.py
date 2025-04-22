@@ -73,4 +73,5 @@ with col2:
     average_pressure = st.text_input("Average Pressure (hPa)", "1013.0")
     st.markdown("</div>", unsafe_allow_html=True)
 
-if st
+if st.button('🔮 Predict Power Generation', use_container_width=True):
+
