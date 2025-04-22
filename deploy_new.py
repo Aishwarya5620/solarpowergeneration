@@ -7,7 +7,7 @@ import numpy as np
 import pickle
 from sklearn.preprocessing import StandardScaler
 
-# Set page config with solar theme
+# Set page config
 st.set_page_config(
     page_title="Solar Power Generation Predictor",
     page_icon="☀️",
@@ -37,23 +37,22 @@ st.markdown(
         background-position: center;
         background-repeat: no-repeat;
         background-attachment: fixed;
+        color: black !important;
     }
-
     .main {
         background-color: rgba(255, 255, 255, 0.9);
         border-radius: 15px;
         padding: 2rem;
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         margin: 1rem;
     }
-
+    h1, h2, h3, h4, h5, h6, p, label, span, div {
+        color: black !important;
+    }
     .header {
-        color: #FFA500;
-        text-shadow: 1px 1px 2px #000;
         font-size: 2.5rem;
         margin-bottom: 1rem;
     }
-
     .input-box {
         background-color: rgba(255, 255, 255, 0.8);
         border-radius: 10px;
@@ -61,15 +60,14 @@ st.markdown(
         margin-bottom: 1rem;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-
     .result-box {
         background-color: rgba(255, 215, 0, 0.3);
         border-radius: 10px;
         padding: 1.5rem;
         margin-top: 1rem;
         border-left: 5px solid #FFA500;
+        color: black;
     }
-
     .stButton>button {
         background-color: #FFA500;
         color: white;
@@ -79,36 +77,26 @@ st.markdown(
         border: none;
         transition: all 0.3s ease;
     }
-
     .stButton>button:hover {
         background-color: #FF8C00;
         transform: scale(1.05);
     }
-
-    .stTextInput > div > div > input,
-    .stNumberInput > div > div > input {
-        background-color: rgba(255, 255, 255, 0.95);
-        border-radius: 8px;
-        color: black;
-        padding: 0.5rem;
-        font-size: 16px;
-        border: 1px solid #ccc;
+    .stTextInput>div>div>input {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 5px;
+        color: black !important;
     }
-
     .st-emotion-cache-6qob1r {
         background-color: rgba(255, 255, 255, 0.85) !important;
     }
-
     .low-status {
         background-color: #FF6B6B;
         color: white;
     }
-
     .medium-status {
         background-color: #FFD166;
         color: black;
     }
-
     .high-status {
         background-color: #06D6A0;
         color: white;
@@ -118,7 +106,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Function to make predictions
+# Prediction function
 def predict_power(input_data):
     input_df = pd.DataFrame([input_data], columns=feature_names)
     dummy_row = input_df.copy()
@@ -134,8 +122,7 @@ with st.container():
     st.markdown("<h1 class='header'>☀️ Solar Power Generation Predictor</h1>", unsafe_allow_html=True)
     st.markdown("""
     <div style="background-color: rgba(255, 255, 255, 0.7); padding: 1rem; border-radius: 10px; margin-bottom: 2rem;">
-    Predict solar power generation based on weather and environmental conditions.<br>
-    Enter the parameters below and click the predict button.
+    Predict solar power generation based on weather and environmental conditions.
     </div>
     """, unsafe_allow_html=True)
 
@@ -184,11 +171,9 @@ with st.container():
 
             with col1:
                 st.metric("Power Output", f"{prediction:.2f} MW")
-
             with col2:
                 efficiency = (prediction / 10) * 100
                 st.metric("System Efficiency", f"{efficiency:.1f}%")
-
             with col3:
                 if prediction < 2:
                     status = "Low ☁️"
@@ -224,20 +209,18 @@ with st.sidebar:
     st.markdown("""
     This predictive model uses machine learning to estimate solar power generation 
     based on environmental conditions.
-
+    
     **Model Features:**
     - Solar position
     - Weather conditions
     - Atmospheric measurements
     """)
-
     st.header("📝 Instructions")
     st.markdown("""
     1. Enter values for all parameters
     2. Click the predict button
     3. View the power generation estimate
     """)
-
     st.header("⚙️ Model Details")
     st.write("Algorithm: Random Forest Regressor")
     st.write("Trained on historical solar generation data")
@@ -247,7 +230,7 @@ with st.sidebar:
 st.markdown("---")
 st.markdown("""
 <div style="text-align: center; padding: 1rem; background-color: rgba(255, 255, 255, 0.7); border-radius: 10px;">
-    <p>©  Solar Power Analytics | Sustainable Energy Solutions</p>
+    <p>© Solar Power Analytics | Sustainable Energy Solutions</p>
     <p>☀️ Harnessing the power of the sun ☀️</p>
 </div>
 """, unsafe_allow_html=True)
