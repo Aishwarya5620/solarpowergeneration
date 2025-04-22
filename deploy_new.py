@@ -69,12 +69,20 @@ st.markdown(
     .stSuccess, .stInfo, .stError {
         color: black !important;
     }
+    /* Apply black color to all dynamic text outputs (e.g., prediction and energy values) */
+    .stMarkdown {
+        color: black !important;
+    }
+    .stMetric {
+        color: black !important;
+    }
     </style>
     """,
     unsafe_allow_html=True
 )
 
 # The rest of the code remains the same as provided in your original script
+
 
 # Prediction function
 def predict_power(input_data):
