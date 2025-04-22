@@ -12,7 +12,12 @@ with open('scaler.pkl', 'rb') as f:
 with open('features.pkl', 'rb') as f:
     features = pickle.load(f)
 
-# Inject CSS styling
+# Ensure features is a list of the correct length
+if len(features) != scaler.mean_.shape[0]:
+    st.error(f"❌ Feature mismatch: Expected {scaler.mean_.shape[0]} features, but got {len(features)} in 'features.pkl'")
+    st.stop()
+
+# CSS Styling
 st.markdown("""
     <style>
     body {
@@ -69,16 +74,16 @@ st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
 st.markdown("## 🌞 Solar Power Generation Predictor", unsafe_allow_html=True)
 st.markdown("### 🔧 Enter environmental feature values below", unsafe_allow_html=True)
 
-# Input layout: 2 columns with 4 rows = 8 features
+# Input fields
 user_input = []
-cols = st.columns(2)  # Two columns
+cols = st.columns(2)
 
 for i, feat in enumerate(features):
-    with cols[i % 2]:  # Alternate between col 0 and col 1
+    with cols[i % 2]:
         val = st.number_input(f"**{feat}**", value=0.0, format="%.2f")
         user_input.append(val)
 
-# Prediction
+# Predict button
 if st.button("🚀 Predict"):
     try:
         input_array = np.array(user_input).reshape(1, -1)
