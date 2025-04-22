@@ -119,16 +119,23 @@ with st.container():
                 'average_pressure': average_pressure
             }
 
+            import streamlit as st
+
             prediction = predict_power(input_data)
             energy_joules = prediction * 1_000_000 * 3600
-
-            st.success(f"Predicted Power Generation: {prediction:.2f} MW")
-            st.info(f"Estimated Energy for 1 Hour: {energy_joules:,.0f} J")
-
+            
+            # Displaying predicted power generation with black color
+            st.success(f"<p style='color:black;'>Predicted Power Generation: {prediction:.2f} MW</p>", unsafe_allow_html=True)
+            st.info(f"<p style='color:black;'>Estimated Energy for 1 Hour: {energy_joules:,.0f} J</p>", unsafe_allow_html=True)
+            
             # Efficiency gauge
             efficiency = (prediction / 10) * 100
-            st.metric("System Efficiency", f"{efficiency:.1f}%")
+            st.metric("System Efficiency", f"{efficiency:.1f}%", label_visibility="collapsed")
+            
+            # Progress bar with black color
+            st.markdown(f"<div style='height: 10px; background-color: black;'></div>", unsafe_allow_html=True)
             st.progress(min(efficiency / 100, 1.0))
+
 
         except Exception as e:
             st.error(f"Error: {str(e)}")
