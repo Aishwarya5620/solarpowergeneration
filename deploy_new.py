@@ -33,11 +33,12 @@ st.markdown(
     <style>
     .stApp {
         background-color: #f0f8ff;
+        color: black !important;
     }
     .title {
         font-size: 2.5rem;
         font-weight: 600;
-        color: #333;
+        color: black !important;
         text-align: center;
         margin-bottom: 1rem;
     }
@@ -47,6 +48,7 @@ st.markdown(
         border-radius: 12px;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         margin-bottom: 1rem;
+        color: black !important;
     }
     .stButton>button {
         background-color: #007acc;
@@ -59,6 +61,9 @@ st.markdown(
     }
     .stButton>button:hover {
         background-color: #005f99;
+    }
+    label, .stTextInput, .stNumberInput, .stMetric, .stSelectbox, .stSlider, .stCheckbox {
+        color: black !important;
     }
     </style>
     """,
